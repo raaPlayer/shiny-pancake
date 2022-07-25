@@ -6,12 +6,12 @@ import com.raa.reggie.common.R;
 import com.raa.reggie.dto.SetmealDto;
 import com.raa.reggie.entity.Setmeal;
 import com.raa.reggie.service.CategoryService;
-//import com.raa.reggie.service.SetmealDishService;
 import com.raa.reggie.service.SetmealService;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,21 +19,17 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/setmeal")
-@Slf4j
 public class SetmealController {
 
     @Autowired
     private SetmealService setmealService;
 
-//    @Autowired
-//    private SetmealDishService setmealDishService;
-
     @Autowired
     private CategoryService categoryService;
 
     @PostMapping
+    @CacheEvict(value = "Setmeal.CategoryId", allEntries = true)    //清除val下所有key缓存
     public R<String> save(@RequestBody SetmealDto setmealDto){
-        log.info("套餐dto: {}", setmealDto);
         setmealService.saveWithDish(setmealDto);
         return R.success("新增套餐成功");
     }
@@ -68,11 +64,12 @@ public class SetmealController {
     }
 
     @DeleteMapping
+    @CacheEvict(value = "Setmeal.CategoryId", allEntries = true)
     public R<String> reomve(@RequestParam List<Long> ids){
         setmealService.removeWithDish(ids);
         return R.success("套餐数据删除成功");
     }
-
+    @Cacheable(value = "Setmeal.CategoryId", key = "#setmeal.categoryId")
     @GetMapping("/list")
     public R<List<Setmeal>> list(Setmeal setmeal){
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<Setmeal>()
