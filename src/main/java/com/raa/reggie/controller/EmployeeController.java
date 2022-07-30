@@ -39,6 +39,7 @@ public class EmployeeController {
             return R.error("账号已禁用");
 
         request.getSession().setAttribute("employee", emp.getId());
+        request.getSession().removeAttribute("user");
         return R.success(emp);
     }
 

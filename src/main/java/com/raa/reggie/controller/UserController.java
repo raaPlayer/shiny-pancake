@@ -65,7 +65,7 @@ public class UserController {
                 userService.save(one);
             }
             session.setAttribute("user", one.getId());
-
+            session.removeAttribute("employee");
             return R.success(one);
         }
         return R.error("登录失败");

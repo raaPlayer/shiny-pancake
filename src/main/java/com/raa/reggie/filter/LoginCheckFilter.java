@@ -22,14 +22,13 @@ public class LoginCheckFilter implements Filter {
             "/backend/**",
             "/front/**",
             "/user/sendMsg",
-            "/user/login"
+            "/user/login",
     };
 //    "/common/**"
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-//        long id = Thread.currentThread().getId();
-//        log.info("线程id：{}",id);
+//        log.info("线程id：{}",Thread.currentThread().getId());
 
         HttpServletRequest request = (HttpServletRequest) servletRequest;
         HttpServletResponse response = (HttpServletResponse) servletResponse;
@@ -42,7 +41,7 @@ public class LoginCheckFilter implements Filter {
                 return;
             }
         }
-
+        //一类账号登录后去移除其他类型账号session
         if(request.getSession().getAttribute("employee") != null){  //电脑员工登录
             BaseContext.setCurrentId((Long) request.getSession().getAttribute("employee"));
             filterChain.doFilter(request, response);
