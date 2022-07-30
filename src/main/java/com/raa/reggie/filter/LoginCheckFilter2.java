@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Slf4j
-@WebFilter(filterName = "Level_15_Request", urlPatterns = {"/addressBook/*","/shoppingCart/*","/setmeal/*", "/order/submit"})
+@WebFilter(filterName = "Level_15_Request", urlPatterns = {"/addressBook/*","/shoppingCart/*", "/order/submit"})
 public class LoginCheckFilter2 implements Filter {
 
     @Override

@@ -43,17 +43,18 @@ public class LoginCheckFilter implements Filter {
         }
         //一类账号登录后去移除其他类型账号session
         if(request.getSession().getAttribute("employee") != null){  //电脑员工登录
-            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employee"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("employee"), 20L);
             filterChain.doFilter(request, response);
             return;
         }
 
         if(request.getSession().getAttribute("user") != null){  //手机消费者登录
-            BaseContext.setCurrentId((Long) request.getSession().getAttribute("user"));
+            BaseContext.setCurrentId((Long) request.getSession().getAttribute("user"), 10L);
             filterChain.doFilter(request, response);
             return;
         }
 
+        BaseContext.setCurrentId(0L, 0L);
         response.setContentType("text/json;charset=utf-8");
         response.getWriter().write(JSON.toJSONString(R.error("未登录")));
     }

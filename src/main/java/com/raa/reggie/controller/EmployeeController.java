@@ -79,7 +79,7 @@ public class EmployeeController {
 
     @PutMapping
     public R<String> updata(@RequestBody Employee employee){
-//  public R<String> updata(HttpServletRequest request, @RequestBody Employee employee){
+//  public R<String> update(HttpServletRequest request, @RequestBody Employee employee){
 //        long id = Thread.currentThread().getId();
 //        log.info("线程id：{}",id);
 

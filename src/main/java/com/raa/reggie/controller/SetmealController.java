@@ -1,7 +1,9 @@
 package com.raa.reggie.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.raa.reggie.common.BaseContext;
 import com.raa.reggie.common.R;
 import com.raa.reggie.dto.SetmealDto;
 import com.raa.reggie.entity.Setmeal;
@@ -39,7 +41,7 @@ public class SetmealController {
         Page<Setmeal> pageInfo = new Page<>(page, pageSize);
         LambdaQueryWrapper<Setmeal> queryWrapper = new LambdaQueryWrapper<Setmeal>()
                 .like(StringUtils.isNotEmpty(name), Setmeal::getName, name)
-                .eq(Setmeal::getStatus, 1)
+                .eq(BaseContext.getUserRights() < 20, Setmeal::getStatus, 1)
                 .orderByAsc(Setmeal::getUpdateTime);
         setmealService.page(pageInfo, queryWrapper);
 
@@ -78,5 +80,23 @@ public class SetmealController {
                 .orderByDesc(Setmeal::getUpdateTime);
         List<Setmeal> setmealList = setmealService.list(queryWrapper);
         return R.success(setmealList);
+    }
+
+    @PostMapping("/status/0")
+    public R<String> statusUp(@RequestParam List<Long> ids){
+        return setStatus(0, ids);
+    }
+
+    @PostMapping("/status/1")
+    public R<String> statusDown(@RequestParam List<Long> ids){
+        return setStatus(1, ids);
+    }
+
+    private R<String> setStatus(int i, List<Long> ids){
+        LambdaUpdateWrapper<Setmeal> in = new LambdaUpdateWrapper<Setmeal>()
+                .set(Setmeal::getStatus, i)
+                .in(Setmeal::getId, ids);
+        setmealService.update(in);
+        return R.success("成功");
     }
 }
