@@ -82,11 +82,13 @@ public class SetmealController {
         return R.success(setmealList);
     }
 
+    @CacheEvict(value = "Setmeal.CategoryId", allEntries = true)
     @PostMapping("/status/0")
     public R<String> statusUp(@RequestParam List<Long> ids){
         return setStatus(0, ids);
     }
 
+    @CacheEvict(value = "Setmeal.CategoryId", allEntries = true)
     @PostMapping("/status/1")
     public R<String> statusDown(@RequestParam List<Long> ids){
         return setStatus(1, ids);

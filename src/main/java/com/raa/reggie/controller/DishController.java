@@ -55,7 +55,7 @@ public class DishController {
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<>();
         queryWrapper.like(StringUtils.isNotEmpty(name), Dish::getName, name)
-                .eq(Dish::getStatus, 1)
+                .eq(BaseContext.getUserRights() < 20 ,Dish::getStatus, 1)
                 .orderByDesc(Dish::getUpdateTime);
         dishService.page(pageInfo, queryWrapper);
 
@@ -104,7 +104,7 @@ public class DishController {
 
         LambdaQueryWrapper<Dish> queryWrapper = new LambdaQueryWrapper<Dish>()
                 .eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId())
-                .eq(BaseContext.getUserRights() < 20, Dish::getStatus, 1)   //本来应该能给员工看见停售菜品，不给用户看，此处得改
+                .eq(BaseContext.getUserRights() < 20, Dish::getStatus, 1)
                 .orderByAsc(Dish::getSort)
                 .orderByDesc(Dish::getUpdateTime);
         List<Dish> dishes = dishService.list(queryWrapper);
@@ -125,6 +125,10 @@ public class DishController {
 
     @DeleteMapping
     public R<String> delete(@RequestParam List<Long> ids){
+        for(Long i : ids){
+            Dish byId = dishService.getById(i);
+            redisTemplate.delete("dish.CategoryId=" + byId.getCategoryId());
+        }
         dishService.removeByIds(ids);
         return R.success("删除成功");
     }
@@ -140,6 +144,10 @@ public class DishController {
     }
 
     private R<String> setStatus(int i, List<Long> ids){
+        for(Long id : ids){
+            Dish byId = dishService.getById(id);
+            redisTemplate.delete("dish.CategoryId=" + byId.getCategoryId());
+        }
         LambdaUpdateWrapper<Dish> in = new LambdaUpdateWrapper<Dish>()
                 .set(Dish::getStatus, i)
                 .in(Dish::getId, ids);

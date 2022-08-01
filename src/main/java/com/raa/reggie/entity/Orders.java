@@ -58,4 +58,6 @@ public class Orders implements Serializable {
 
     //收货人
     private String consignee;
+
+    private Integer sumNum;
 }

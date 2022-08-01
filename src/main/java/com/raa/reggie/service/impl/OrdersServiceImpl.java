@@ -53,6 +53,7 @@ public class OrdersServiceImpl extends ServiceImpl<OrdersMapper, Orders> impleme
         orders.setPhone(addressBook.getPhone());
         orders.setConsignee(addressBook.getConsignee());
         orders.setOrderTime(LocalDateTime.now());
+        orders.setSumNum(shoppingList.size());
         //未做真正的支付功能，假数据
         orders.setStatus(2);
         orders.setCheckoutTime(LocalDateTime.now());
